@@ -1,16 +1,18 @@
 # codegraph-auto-init
 
-[codegraph](https://github.com/codegraph-dev) のセットアップを開発マシン全体に一発で適用するインストーラです。
-`codegraph install` / `codegraph uninstall` のような感覚で、シェル環境への組み込みと解除ができます。
+[English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md)
 
-## やること
+A one-liner installer that wires [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) into your entire development machine.
+Think of it as `codegraph install` / `codegraph uninstall`, but for your shell environment.
 
-1. **グローバル git ignore に `.codegraph/` を追加**
-   すべてのリポジトリ(既存・将来)で `.codegraph/` が git の追跡対象外になります。
-2. **zsh の `git` ラッパーを設置**
-   `git init` / `git clone` でリポジトリを作ると、自動でバックグラウンドの `codegraph init` が走ります。
-3. **既存リポジトリの一括インデックス**
-   `DEV_DIR`(デフォルト: `~/dev`)以下のすべての git リポジトリで `codegraph init` を実行します(`.codegraph` がないリポジトリのみ)。
+## What it does
+
+1. **Adds `.codegraph/` to the global git ignore**
+   `.codegraph/` is excluded from git tracking in every repository — existing and future.
+2. **Installs a zsh `git` wrapper**
+   Creating a repository with `git init` / `git clone` automatically runs `codegraph init` in the background.
+3. **Indexes existing repositories in bulk**
+   Runs `codegraph init` in every git repository under `DEV_DIR` (default: `~/dev`) that doesn't have a `.codegraph` directory yet.
 
 ## Install
 
@@ -18,17 +20,17 @@
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh
 ```
 
-オプション:
+Options:
 
 ```sh
-# 既存リポジトリの一括スキャンをスキップ(設定の組み込みのみ)
+# Skip the bulk scan of existing repositories (wire up the settings only)
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh -s -- --no-scan
 
-# スキャン対象ディレクトリを変更(デフォルト: ~/dev)
+# Change the scan target directory (default: ~/dev)
 DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh)"
 ```
 
-何度実行しても安全です(冪等)。設定済みの項目はスキップされます。
+Safe to run repeatedly (idempotent). Already-configured items are skipped.
 
 ## Uninstall
 
@@ -36,31 +38,31 @@ DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/cod
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh
 ```
 
-グローバル ignore のエントリ・`.zshrc` の source 行・ラッパー本体を削除します。
-各リポジトリのインデックス(`.codegraph/`)はデフォルトで残します。インデックスごと消す場合:
+Removes the global ignore entry, the source line in `.zshrc`, and the wrapper itself.
+Per-repository indexes (`.codegraph/`) are kept by default. To delete them as well:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh -s -- --purge
 ```
 
-## 仕組み
+## How it works
 
-| 対象 | 内容 |
+| Target | What happens |
 |---|---|
-| `~/.config/git/ignore` | `.codegraph/` を1行追加(`core.excludesFile` 設定済みの場合はそのファイル) |
-| `~/.config/codegraph-auto-init/git-wrapper.zsh` | ラッパー本体。`git init` / `git clone` 成功後に新リポジトリを検出して `codegraph init` をバックグラウンド実行 |
-| `~/.zshrc` | 上記ファイルを source する行を1行追加(`# codegraph-auto-init` マーカー付き) |
+| `~/.config/git/ignore` | One `.codegraph/` line is appended (or to the file set in `core.excludesFile` if configured) |
+| `~/.config/codegraph-auto-init/git-wrapper.zsh` | The wrapper itself. After a successful `git init` / `git clone`, it detects the new repository and runs `codegraph init` in the background |
+| `~/.zshrc` | One line that sources the file above (tagged with a `# codegraph-auto-init` marker) |
 
-ラッパーは以下の場合は何もしません(安全側に倒れる設計):
+The wrapper does nothing in the following cases (fails safe):
 
-- `codegraph` CLI が PATH にない
-- 対象ディレクトリに既に `.codegraph/` がある
-- bare リポジトリ(`git init --bare`)
-- `git -C dir init` のような値付きグローバルオプションでサブコマンド検出に失敗した場合
+- the `codegraph` CLI is not on `PATH`
+- the target directory already has `.codegraph/`
+- bare repositories (`git init --bare`)
+- subcommand detection fails on value-taking global options such as `git -C dir init`
 
 ## Requirements
 
-- zsh(ラッパーは zsh 専用。ignore 設定と一括スキャンはシェル非依存)
+- zsh (the wrapper is zsh-only; the ignore setting and the bulk scan are shell-agnostic)
 - [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) CLI
 - macOS / Linux
 
