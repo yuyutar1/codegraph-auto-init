@@ -1,6 +1,6 @@
 # codegraph-auto-init
 
-[English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md)
+[English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
 [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) 설정을 개발 머신 전체에 한 번에 적용하는 인스톨러입니다.
 `codegraph install` / `codegraph uninstall`과 같은 감각으로 셸 환경에 설치하고 제거할 수 있습니다.

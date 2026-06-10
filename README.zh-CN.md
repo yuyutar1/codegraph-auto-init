@@ -1,6 +1,6 @@
 # codegraph-auto-init
 
-[English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md)
+[English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
 一条命令即可将 [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) 配置应用到整台开发机器的安装器。
 就像 `codegraph install` / `codegraph uninstall` 一样,可以一键接入或移除 shell 环境配置。

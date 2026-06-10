@@ -1,0 +1,71 @@
+# codegraph-auto-init
+
+[English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
+
+Ein Einzeiler-Installer, der [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) auf der gesamten Entwicklungsmaschine einrichtet.
+Stellen Sie es sich wie `codegraph install` / `codegraph uninstall` vor — nur für Ihre Shell-Umgebung.
+
+## Was es macht
+
+1. **Fügt `.codegraph/` zur globalen git ignore hinzu**
+   `.codegraph/` wird in allen Repositories — bestehenden und zukünftigen — vom git-Tracking ausgeschlossen.
+2. **Installiert einen `git`-Wrapper für zsh**
+   Beim Erstellen eines Repositories mit `git init` / `git clone` wird automatisch `codegraph init` im Hintergrund ausgeführt.
+3. **Indexiert bestehende Repositories im Stapel**
+   Führt `codegraph init` in jedem git-Repository unter `DEV_DIR` (Standard: `~/dev`) aus, das noch kein `.codegraph`-Verzeichnis hat.
+
+## Installation
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh
+```
+
+Optionen:
+
+```sh
+# Stapel-Scan bestehender Repositories überspringen (nur Konfiguration einrichten)
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh -s -- --no-scan
+
+# Zielverzeichnis des Scans ändern (Standard: ~/dev)
+DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh)"
+```
+
+Mehrfache Ausführung ist sicher (idempotent). Bereits konfigurierte Punkte werden übersprungen.
+
+## Deinstallation
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh
+```
+
+Entfernt den Eintrag aus der globalen ignore, die source-Zeile in `.zshrc` und den Wrapper selbst.
+Die Indizes der einzelnen Repositories (`.codegraph/`) bleiben standardmäßig erhalten. Um sie ebenfalls zu löschen:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh -s -- --purge
+```
+
+## Funktionsweise
+
+| Ziel | Was passiert |
+|---|---|
+| `~/.config/git/ignore` | Eine Zeile `.codegraph/` wird angehängt (bzw. an die in `core.excludesFile` konfigurierte Datei) |
+| `~/.config/codegraph-auto-init/git-wrapper.zsh` | Der Wrapper selbst. Nach einem erfolgreichen `git init` / `git clone` erkennt er das neue Repository und führt `codegraph init` im Hintergrund aus |
+| `~/.zshrc` | Eine Zeile, die die obige Datei sourct (markiert mit `# codegraph-auto-init`) |
+
+Der Wrapper tut in folgenden Fällen nichts (Fail-safe-Design):
+
+- das `codegraph`-CLI ist nicht im `PATH`
+- das Zielverzeichnis enthält bereits `.codegraph/`
+- Bare-Repositories (`git init --bare`)
+- die Erkennung des Unterbefehls schlägt bei wertnehmenden globalen Optionen wie `git -C dir init` fehl
+
+## Voraussetzungen
+
+- zsh (der Wrapper ist zsh-spezifisch; die ignore-Konfiguration und der Stapel-Scan sind Shell-unabhängig)
+- [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) CLI
+- macOS / Linux
+
+## Lizenz
+
+MIT

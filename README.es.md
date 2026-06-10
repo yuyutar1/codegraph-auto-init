@@ -1,6 +1,6 @@
 # codegraph-auto-init
 
-[English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md)
+[English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
 Un instalador de una sola línea que integra [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) en toda tu máquina de desarrollo.
 Piénsalo como `codegraph install` / `codegraph uninstall`, pero para tu entorno de shell.
