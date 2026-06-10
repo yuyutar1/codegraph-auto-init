@@ -2,7 +2,7 @@
 
 [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
-Ein Einzeiler-Installer, der [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) auf der gesamten Entwicklungsmaschine einrichtet.
+Ein Einzeiler-Installer, der [codegraph](https://github.com/colbymchenry/codegraph) auf der gesamten Entwicklungsmaschine einrichtet.
 Stellen Sie es sich wie `codegraph install` / `codegraph uninstall` vor — nur für Ihre Shell-Umgebung.
 
 ## Was es macht
@@ -81,7 +81,7 @@ Der Wrapper tut in folgenden Fällen nichts (Fail-safe-Design):
 ## Voraussetzungen
 
 - zsh (der Wrapper ist zsh-spezifisch; die ignore-Konfiguration und der Stapel-Scan sind Shell-unabhängig)
-- [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) CLI
+- [codegraph](https://github.com/colbymchenry/codegraph) CLI
 - macOS / Linux
 
 ## Lizenz

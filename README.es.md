@@ -2,7 +2,7 @@
 
 [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
-Un instalador de una sola línea que integra [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) en toda tu máquina de desarrollo.
+Un instalador de una sola línea que integra [codegraph](https://github.com/colbymchenry/codegraph) en toda tu máquina de desarrollo.
 Piénsalo como `codegraph install` / `codegraph uninstall`, pero para tu entorno de shell.
 
 ## Qué hace
@@ -81,7 +81,7 @@ El wrapper no hace nada en los siguientes casos (diseño a prueba de fallos):
 ## Requisitos
 
 - zsh (el wrapper es solo para zsh; la configuración del ignore y el escaneo en bloque no dependen del shell)
-- CLI de [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph)
+- CLI de [codegraph](https://github.com/colbymchenry/codegraph)
 - macOS / Linux
 
 ## Licencia

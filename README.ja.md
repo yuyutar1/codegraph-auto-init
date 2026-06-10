@@ -2,7 +2,7 @@
 
 [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
-[codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) のセットアップを開発マシン全体に一発で適用するインストーラです。
+[codegraph](https://github.com/colbymchenry/codegraph) のセットアップを開発マシン全体に一発で適用するインストーラです。
 `codegraph install` / `codegraph uninstall` のような感覚で、シェル環境への組み込みと解除ができます。
 
 ## やること
@@ -81,7 +81,7 @@ codegraph-auto-init remove-dir ~/work  # 設定から削除
 ## Requirements
 
 - zsh(ラッパーは zsh 専用。ignore 設定と一括スキャンはシェル非依存)
-- [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) CLI
+- [codegraph](https://github.com/colbymchenry/codegraph) CLI
 - macOS / Linux
 
 ## License

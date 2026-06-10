@@ -2,7 +2,7 @@
 
 [English](README.md) | [日本語](README.ja.md) | [简体中文](README.zh-CN.md) | [한국어](README.ko.md) | [Español](README.es.md) | [Français](README.fr.md) | [Deutsch](README.de.md)
 
-[codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) 설정을 개발 머신 전체에 한 번에 적용하는 인스톨러입니다.
+[codegraph](https://github.com/colbymchenry/codegraph) 설정을 개발 머신 전체에 한 번에 적용하는 인스톨러입니다.
 `codegraph install` / `codegraph uninstall`과 같은 감각으로 셸 환경에 설치하고 제거할 수 있습니다.
 
 ## 하는 일
@@ -81,7 +81,7 @@ codegraph-auto-init remove-dir ~/work  # 설정에서 디렉터리 제거
 ## 요구 사항
 
 - zsh(래퍼는 zsh 전용. ignore 설정과 일괄 스캔은 셸 비의존)
-- [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) CLI
+- [codegraph](https://github.com/colbymchenry/codegraph) CLI
 - macOS / Linux
 
 ## 라이선스
