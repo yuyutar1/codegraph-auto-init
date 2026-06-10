@@ -80,9 +80,14 @@ codegraph-auto-init remove-dir ~/work  # 从配置中移除目录
 
 ## 环境要求
 
-- zsh(包装函数仅支持 zsh;ignore 配置和批量扫描与 shell 无关)
-- [codegraph](https://github.com/colbymchenry/codegraph) CLI
-- macOS / Linux
+| 要求 | 用途 | 说明 |
+|---|---|---|
+| macOS / Linux | 全部功能 | 使用 POSIX sh 和 `find` / `grep`;不支持 Windows |
+| git 1.7.12+ | 全部功能 | 默认全局 ignore 路径 `~/.config/git/ignore` 需要 1.7.12 及以上;现代 git 均满足 |
+| curl | 安装 / 卸载 | 仅在运行一行命令时需要;从本地 checkout 运行时不需要 |
+| zsh | `git init` / `git clone` 时自动 init | 包装函数是 zsh 函数;ignore 配置、CLI 和批量扫描在任何 shell 下都可用 |
+| [codegraph](https://github.com/colbymchenry/codegraph) CLI | 索引(包装函数和 `scan`) | 没有它安装也能完成(跳过初次扫描);之后安装并运行 `codegraph-auto-init scan` 即可 |
+| `~/.local/bin` 在 `PATH` 中 | 使用 `codegraph-auto-init` 命令 | 缺失时安装器会发出警告 |
 
 ## 许可证
 

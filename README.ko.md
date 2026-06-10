@@ -80,9 +80,14 @@ codegraph-auto-init remove-dir ~/work  # 설정에서 디렉터리 제거
 
 ## 요구 사항
 
-- zsh(래퍼는 zsh 전용. ignore 설정과 일괄 스캔은 셸 비의존)
-- [codegraph](https://github.com/colbymchenry/codegraph) CLI
-- macOS / Linux
+| 요구 사항 | 필요한 경우 | 비고 |
+|---|---|---|
+| macOS / Linux | 전체 | POSIX sh와 `find` / `grep` 사용. Windows는 지원하지 않음 |
+| git 1.7.12+ | 전체 | 기본 글로벌 ignore 경로 `~/.config/git/ignore`는 1.7.12 이상 필요. 최신 git이면 문제 없음 |
+| curl | 설치 / 제거 | 원라이너 실행 시에만 필요. 로컬 checkout에서 실행할 때는 불필요 |
+| zsh | `git init` / `git clone` 시 자동 init | 래퍼는 zsh 함수. ignore 설정·CLI·일괄 스캔은 어떤 셸에서도 동작 |
+| [codegraph](https://github.com/colbymchenry/codegraph) CLI | 인덱싱(래퍼와 `scan`) | 없어도 설치 자체는 완료(초기 스캔은 건너뜀). 나중에 설치 후 `codegraph-auto-init scan` 실행 |
+| `~/.local/bin`이 `PATH`에 포함 | `codegraph-auto-init` 명령 사용 | 없으면 인스톨러가 경고 표시 |
 
 ## 라이선스
 

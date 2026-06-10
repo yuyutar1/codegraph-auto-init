@@ -80,9 +80,14 @@ codegraph-auto-init remove-dir ~/work  # 設定から削除
 
 ## Requirements
 
-- zsh(ラッパーは zsh 専用。ignore 設定と一括スキャンはシェル非依存)
-- [codegraph](https://github.com/colbymchenry/codegraph) CLI
-- macOS / Linux
+| 要件 | 必要な場面 | 備考 |
+|---|---|---|
+| macOS / Linux | すべて | POSIX sh と `find` / `grep` を使用。Windows は非対応 |
+| git 1.7.12+ | すべて | デフォルトのグローバル ignore パス `~/.config/git/ignore` は 1.7.12 以降。現行の git なら問題なし |
+| curl | install / uninstall | ワンライナー実行時のみ。ローカルの checkout から実行する場合は不要 |
+| zsh | `git init` / `git clone` での自動 init | ラッパーは zsh 関数。ignore 設定・CLI・一括スキャンはどのシェルでも動作 |
+| [codegraph](https://github.com/colbymchenry/codegraph) CLI | インデックス作成(ラッパーと `scan`) | なくても install 自体は完了(初回スキャンはスキップ)。後から導入して `codegraph-auto-init scan` を実行すれば OK |
+| `~/.local/bin` が `PATH` に含まれること | `codegraph-auto-init` コマンドの利用 | 含まれていない場合はインストーラが警告を表示 |
 
 ## License
 

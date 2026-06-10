@@ -80,9 +80,14 @@ El wrapper no hace nada en los siguientes casos (diseño a prueba de fallos):
 
 ## Requisitos
 
-- zsh (el wrapper es solo para zsh; la configuración del ignore y el escaneo en bloque no dependen del shell)
-- CLI de [codegraph](https://github.com/colbymchenry/codegraph)
-- macOS / Linux
+| Requisito | Necesario para | Notas |
+|---|---|---|
+| macOS / Linux | todo | usa POSIX sh y `find` / `grep`; Windows no está soportado |
+| git 1.7.12+ | todo | la ruta por defecto del ignore global `~/.config/git/ignore` requiere 1.7.12+; cualquier git moderno sirve |
+| curl | instalación / desinstalación | solo para el one-liner; no hace falta al ejecutar desde un checkout local |
+| zsh | auto-init en `git init` / `git clone` | el wrapper es una función de zsh; el ignore, el CLI y el escaneo funcionan con cualquier shell |
+| CLI de [codegraph](https://github.com/colbymchenry/codegraph) | indexación (wrapper y `scan`) | la instalación se completa sin él (se omite el escaneo inicial); instálalo después y ejecuta `codegraph-auto-init scan` |
+| `~/.local/bin` en el `PATH` | el comando `codegraph-auto-init` | el instalador avisa si falta |
 
 ## Licencia
 

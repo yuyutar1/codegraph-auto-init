@@ -80,9 +80,14 @@ Der Wrapper tut in folgenden Fällen nichts (Fail-safe-Design):
 
 ## Voraussetzungen
 
-- zsh (der Wrapper ist zsh-spezifisch; die ignore-Konfiguration und der Stapel-Scan sind Shell-unabhängig)
-- [codegraph](https://github.com/colbymchenry/codegraph) CLI
-- macOS / Linux
+| Voraussetzung | Benötigt für | Hinweise |
+|---|---|---|
+| macOS / Linux | alles | verwendet POSIX sh sowie `find` / `grep`; Windows wird nicht unterstützt |
+| git 1.7.12+ | alles | der Standardpfad der globalen ignore `~/.config/git/ignore` erfordert 1.7.12+; jedes moderne git genügt |
+| curl | Installation / Deinstallation | nur für den Einzeiler; bei Ausführung aus einem lokalen Checkout nicht nötig |
+| zsh | Auto-Init bei `git init` / `git clone` | der Wrapper ist eine zsh-Funktion; ignore-Konfiguration, CLI und Stapel-Scan funktionieren mit jeder Shell |
+| [codegraph](https://github.com/colbymchenry/codegraph) CLI | Indexierung (Wrapper und `scan`) | die Installation läuft auch ohne durch (der erste Scan wird übersprungen); später installieren und `codegraph-auto-init scan` ausführen |
+| `~/.local/bin` im `PATH` | der Befehl `codegraph-auto-init` | der Installer warnt, falls es fehlt |
 
 ## Lizenz
 
