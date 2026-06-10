@@ -7,7 +7,8 @@
 #
 # What it does:
 #   1. Removes the `.codegraph/` entry from the global git ignore file
-#   2. Removes the source line from ~/.zshrc, the wrapper snippet, the CLI, and the configuration
+#   2. Removes the source lines from ~/.zshrc and ~/.bashrc, the fish conf.d file,
+#      the wrapper snippets, the CLI, and the configuration
 #   3. (--purge only) deletes .codegraph/ directories in git repos under the configured
 #      scan directories (or DEV_DIR if set)
 set -eu
@@ -15,7 +16,7 @@ set -eu
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/codegraph-auto-init"
 DIRS_FILE="$CONFIG_DIR/dirs"
 CLI="$HOME/.local/bin/codegraph-auto-init"
-ZSHRC="${ZDOTDIR:-$HOME}/.zshrc"
+FISH_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/fish/conf.d/codegraph-auto-init.fish"
 MARKER='# codegraph-auto-init'
 
 PURGE=0
@@ -55,14 +56,20 @@ else
   info "global git ignore: no .codegraph/ entry found"
 fi
 
-# --- 2. zsh git wrapper, CLI, configuration ---------------------------------
-if [ -f "$ZSHRC" ] && grep -qF "$MARKER" "$ZSHRC"; then
-  tmp=$(mktemp)
-  grep -vF "$MARKER" "$ZSHRC" >"$tmp" || true
-  mv "$tmp" "$ZSHRC"
-  info "zshrc: removed source line from $ZSHRC"
-else
-  info "zshrc: no source line found"
+# --- 2. shell git wrappers, CLI, configuration -------------------------------
+for rc in "${ZDOTDIR:-$HOME}/.zshrc" "$HOME/.bashrc"; do
+  if [ -f "$rc" ] && grep -qF "$MARKER" "$rc"; then
+    tmp=$(mktemp)
+    grep -vF "$MARKER" "$rc" >"$tmp" || true
+    mv "$tmp" "$rc"
+    info "$(basename "$rc"): removed source line"
+  else
+    info "$(basename "$rc"): no source line found"
+  fi
+done
+if [ -f "$FISH_CONF" ]; then
+  rm -f "$FISH_CONF"
+  info "fish: removed $FISH_CONF"
 fi
 if [ -f "$CLI" ]; then
   rm -f "$CLI"

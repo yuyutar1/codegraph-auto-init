@@ -9,7 +9,7 @@
 
 1. **将 `.codegraph/` 添加到全局 git ignore**(可选 — 可用 `--no-ignore` 跳过)
    所有仓库(现有的和未来的)中,`.codegraph/` 都不会被 git 跟踪。
-2. **安装 zsh 的 `git` 包装函数**
+2. **安装 zsh / bash / fish 的 `git` 包装函数**
    使用 `git init` / `git clone` 创建仓库时,会自动在后台运行 `codegraph init`。
 3. **批量索引现有仓库**
    对 `DEV_DIR`(默认: `~/dev`)下所有 git 仓库运行 `codegraph init`(仅限尚无 `.codegraph` 目录的仓库)。
@@ -67,8 +67,9 @@ codegraph-auto-init remove-dir ~/work  # 从配置中移除目录
 | 目标 | 内容 |
 |---|---|
 | `~/.config/git/ignore` | 追加一行 `.codegraph/`(如已配置 `core.excludesFile`,则写入该文件) |
-| `~/.config/codegraph-auto-init/git-wrapper.zsh` | 包装函数本体。`git init` / `git clone` 成功后,检测新仓库并在后台运行 `codegraph init` |
-| `~/.zshrc` | 追加一行 source 上述文件的语句(带 `# codegraph-auto-init` 标记) |
+| `~/.config/codegraph-auto-init/git-wrapper.sh` | zsh / bash 用包装函数本体。`git init` / `git clone` 成功后,检测新仓库并在后台运行 `codegraph init` |
+| `~/.zshrc` / `~/.bashrc` | 各追加一行 source 上述文件的语句(带 `# codegraph-auto-init` 标记;仅当该 shell 存在时) |
+| `~/.config/fish/conf.d/codegraph-auto-init.fish` | fish 版包装函数,由 fish 自动加载(仅当使用 fish 时安装) |
 | `~/.local/bin/codegraph-auto-init` | 管理 CLI(`scan` / `dirs` / `add-dir` / `remove-dir`) |
 
 以下情况包装函数不做任何操作(故障安全设计):
@@ -85,7 +86,7 @@ codegraph-auto-init remove-dir ~/work  # 从配置中移除目录
 | macOS / Linux | 全部功能 | 使用 POSIX sh 和 `find` / `grep`;不支持 Windows |
 | git 1.7.12+ | 全部功能 | 默认全局 ignore 路径 `~/.config/git/ignore` 需要 1.7.12 及以上;现代 git 均满足 |
 | curl | 安装 / 卸载 | 仅在运行一行命令时需要;从本地 checkout 运行时不需要 |
-| zsh | `git init` / `git clone` 时自动 init | 包装函数是 zsh 函数;ignore 配置、CLI 和批量扫描在任何 shell 下都可用 |
+| zsh / bash / fish | `git init` / `git clone` 时自动 init | 会为机器上存在的每个 shell 安装包装函数;ignore 配置、CLI 和批量扫描在任何 shell 下都可用 |
 | [codegraph](https://github.com/colbymchenry/codegraph) CLI | 索引(包装函数和 `scan`) | 没有它安装也能完成(跳过初次扫描);之后安装并运行 `codegraph-auto-init scan` 即可 |
 | `~/.local/bin` 在 `PATH` 中 | 使用 `codegraph-auto-init` 命令 | 缺失时安装器会发出警告 |
 

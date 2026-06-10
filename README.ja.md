@@ -9,7 +9,7 @@
 
 1. **グローバル git ignore に `.codegraph/` を追加**(任意 — `--no-ignore` でスキップ可)
    すべてのリポジトリ(既存・将来)で `.codegraph/` が git の追跡対象外になります。
-2. **zsh の `git` ラッパーを設置**
+2. **zsh / bash / fish の `git` ラッパーを設置**
    `git init` / `git clone` でリポジトリを作ると、自動でバックグラウンドの `codegraph init` が走ります。
 3. **既存リポジトリの一括インデックス**
    `DEV_DIR`(デフォルト: `~/dev`)以下のすべての git リポジトリで `codegraph init` を実行します(`.codegraph` がないリポジトリのみ)。
@@ -67,8 +67,9 @@ codegraph-auto-init remove-dir ~/work  # 設定から削除
 | 対象 | 内容 |
 |---|---|
 | `~/.config/git/ignore` | `.codegraph/` を1行追加(`core.excludesFile` 設定済みの場合はそのファイル) |
-| `~/.config/codegraph-auto-init/git-wrapper.zsh` | ラッパー本体。`git init` / `git clone` 成功後に新リポジトリを検出して `codegraph init` をバックグラウンド実行 |
-| `~/.zshrc` | 上記ファイルを source する行を1行追加(`# codegraph-auto-init` マーカー付き) |
+| `~/.config/codegraph-auto-init/git-wrapper.sh` | zsh / bash 用ラッパー本体。`git init` / `git clone` 成功後に新リポジトリを検出して `codegraph init` をバックグラウンド実行 |
+| `~/.zshrc` / `~/.bashrc` | 上記ファイルを source する行を1行ずつ追加(`# codegraph-auto-init` マーカー付き。シェルが存在する場合のみ) |
+| `~/.config/fish/conf.d/codegraph-auto-init.fish` | fish 版ラッパー。fish が自動読み込み(fish 利用時のみ設置) |
 | `~/.local/bin/codegraph-auto-init` | 管理 CLI(`scan` / `dirs` / `add-dir` / `remove-dir`) |
 
 ラッパーは以下の場合は何もしません(安全側に倒れる設計):
@@ -85,7 +86,7 @@ codegraph-auto-init remove-dir ~/work  # 設定から削除
 | macOS / Linux | すべて | POSIX sh と `find` / `grep` を使用。Windows は非対応 |
 | git 1.7.12+ | すべて | デフォルトのグローバル ignore パス `~/.config/git/ignore` は 1.7.12 以降。現行の git なら問題なし |
 | curl | install / uninstall | ワンライナー実行時のみ。ローカルの checkout から実行する場合は不要 |
-| zsh | `git init` / `git clone` での自動 init | ラッパーは zsh 関数。ignore 設定・CLI・一括スキャンはどのシェルでも動作 |
+| zsh / bash / fish | `git init` / `git clone` での自動 init | マシンに存在するシェルごとにラッパーを設置。ignore 設定・CLI・一括スキャンはどのシェルでも動作 |
 | [codegraph](https://github.com/colbymchenry/codegraph) CLI | インデックス作成(ラッパーと `scan`) | なくても install 自体は完了(初回スキャンはスキップ)。後から導入して `codegraph-auto-init scan` を実行すれば OK |
 | `~/.local/bin` が `PATH` に含まれること | `codegraph-auto-init` コマンドの利用 | 含まれていない場合はインストーラが警告を表示 |
 

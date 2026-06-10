@@ -9,7 +9,7 @@ Stellen Sie es sich wie `codegraph install` / `codegraph uninstall` vor — nur 
 
 1. **Fügt `.codegraph/` zur globalen git ignore hinzu** (optional — mit `--no-ignore` überspringbar)
    `.codegraph/` wird in allen Repositories — bestehenden und zukünftigen — vom git-Tracking ausgeschlossen.
-2. **Installiert einen `git`-Wrapper für zsh**
+2. **Installiert einen `git`-Wrapper für zsh / bash / fish**
    Beim Erstellen eines Repositories mit `git init` / `git clone` wird automatisch `codegraph init` im Hintergrund ausgeführt.
 3. **Indexiert bestehende Repositories im Stapel**
    Führt `codegraph init` in jedem git-Repository unter `DEV_DIR` (Standard: `~/dev`) aus, das noch kein `.codegraph`-Verzeichnis hat.
@@ -67,8 +67,9 @@ Die konfigurierten Verzeichnisse liegen in `~/.config/codegraph-auto-init/dirs` 
 | Ziel | Was passiert |
 |---|---|
 | `~/.config/git/ignore` | Eine Zeile `.codegraph/` wird angehängt (bzw. an die in `core.excludesFile` konfigurierte Datei) |
-| `~/.config/codegraph-auto-init/git-wrapper.zsh` | Der Wrapper selbst. Nach einem erfolgreichen `git init` / `git clone` erkennt er das neue Repository und führt `codegraph init` im Hintergrund aus |
-| `~/.zshrc` | Eine Zeile, die die obige Datei sourct (markiert mit `# codegraph-auto-init`) |
+| `~/.config/codegraph-auto-init/git-wrapper.sh` | Der Wrapper für zsh / bash. Nach einem erfolgreichen `git init` / `git clone` erkennt er das neue Repository und führt `codegraph init` im Hintergrund aus |
+| `~/.zshrc` / `~/.bashrc` | Je eine source-Zeile (markiert mit `# codegraph-auto-init`, nur wenn die Shell installiert ist) |
+| `~/.config/fish/conf.d/codegraph-auto-init.fish` | Die fish-Version des Wrappers, von fish automatisch geladen (nur installiert, wenn fish vorhanden ist) |
 | `~/.local/bin/codegraph-auto-init` | Verwaltungs-CLI (`scan` / `dirs` / `add-dir` / `remove-dir`) |
 
 Der Wrapper tut in folgenden Fällen nichts (Fail-safe-Design):
@@ -85,7 +86,7 @@ Der Wrapper tut in folgenden Fällen nichts (Fail-safe-Design):
 | macOS / Linux | alles | verwendet POSIX sh sowie `find` / `grep`; Windows wird nicht unterstützt |
 | git 1.7.12+ | alles | der Standardpfad der globalen ignore `~/.config/git/ignore` erfordert 1.7.12+; jedes moderne git genügt |
 | curl | Installation / Deinstallation | nur für den Einzeiler; bei Ausführung aus einem lokalen Checkout nicht nötig |
-| zsh | Auto-Init bei `git init` / `git clone` | der Wrapper ist eine zsh-Funktion; ignore-Konfiguration, CLI und Stapel-Scan funktionieren mit jeder Shell |
+| zsh / bash / fish | Auto-Init bei `git init` / `git clone` | der Wrapper wird für jede auf der Maschine vorhandene Shell installiert; ignore-Konfiguration, CLI und Stapel-Scan funktionieren mit jeder Shell |
 | [codegraph](https://github.com/colbymchenry/codegraph) CLI | Indexierung (Wrapper und `scan`) | die Installation läuft auch ohne durch (der erste Scan wird übersprungen); später installieren und `codegraph-auto-init scan` ausführen |
 | `~/.local/bin` im `PATH` | der Befehl `codegraph-auto-init` | der Installer warnt, falls es fehlt |
 

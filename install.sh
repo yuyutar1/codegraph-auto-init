@@ -10,7 +10,9 @@
 # What it does (idempotent — safe to re-run):
 #   1. Adds `.codegraph/` to the global git ignore file (skip with --no-ignore
 #      if you want git to track .codegraph/)
-#   2. Installs a zsh `git` wrapper that auto-runs `codegraph init` on git init/clone
+#   2. Installs a `git` wrapper that auto-runs `codegraph init` on git init/clone
+#      (zsh and bash via rc source line; fish via conf.d — each only when the
+#      shell is present)
 #   3. Installs the `codegraph-auto-init` CLI into ~/.local/bin
 #   4. Runs `codegraph init` in every existing git repository under the configured
 #      scan directories (seeded from DEV_DIR, default: ~/dev — change any time later
@@ -20,11 +22,11 @@ set -eu
 REPO_RAW="https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main"
 DEV_DIR="${DEV_DIR:-$HOME/dev}"
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/codegraph-auto-init"
-SNIPPET="$CONFIG_DIR/git-wrapper.zsh"
+SNIPPET="$CONFIG_DIR/git-wrapper.sh"
+FISH_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/fish/conf.d/codegraph-auto-init.fish"
 DIRS_FILE="$CONFIG_DIR/dirs"
 BIN_DIR="$HOME/.local/bin"
 CLI="$BIN_DIR/codegraph-auto-init"
-ZSHRC="${ZDOTDIR:-$HOME}/.zshrc"
 MARKER='# codegraph-auto-init'
 
 SCAN=1
@@ -72,18 +74,37 @@ else
   info "global git ignore: skipped (--no-ignore) — .codegraph/ stays visible to git"
 fi
 
-# --- 2. zsh git wrapper ---------------------------------------------------
+# --- 2. shell git wrappers (zsh / bash / fish) -------------------------------
 mkdir -p "$CONFIG_DIR"
-fetch git-wrapper.zsh "$SNIPPET"
+fetch git-wrapper.sh "$SNIPPET"
+rm -f "$CONFIG_DIR/git-wrapper.zsh" # legacy name from zsh-only versions
 info "wrapper: installed to $SNIPPET"
 
-SOURCE_LINE="[ -f \"\${XDG_CONFIG_HOME:-\$HOME/.config}/codegraph-auto-init/git-wrapper.zsh\" ] && source \"\${XDG_CONFIG_HOME:-\$HOME/.config}/codegraph-auto-init/git-wrapper.zsh\" $MARKER"
-touch "$ZSHRC"
-if grep -qF "$MARKER" "$ZSHRC"; then
-  info "zshrc: wrapper already wired in $ZSHRC"
-else
-  printf '\n%s\n' "$SOURCE_LINE" >>"$ZSHRC"
-  info "zshrc: added source line to $ZSHRC"
+SOURCE_LINE="[ -f \"\${XDG_CONFIG_HOME:-\$HOME/.config}/codegraph-auto-init/git-wrapper.sh\" ] && . \"\${XDG_CONFIG_HOME:-\$HOME/.config}/codegraph-auto-init/git-wrapper.sh\" $MARKER"
+
+wire_rc() {
+  # wire_rc <rc-file> — idempotently (re)write the marker-tagged source line
+  touch "$1"
+  if grep -qxF "$SOURCE_LINE" "$1"; then
+    info "$(basename "$1"): wrapper already wired"
+  elif grep -qF "$MARKER" "$1"; then
+    tmp=$(mktemp)
+    grep -vF "$MARKER" "$1" >"$tmp" || true
+    mv "$tmp" "$1"
+    printf '%s\n' "$SOURCE_LINE" >>"$1"
+    info "$(basename "$1"): updated stale wrapper line"
+  else
+    printf '\n%s\n' "$SOURCE_LINE" >>"$1"
+    info "$(basename "$1"): added source line"
+  fi
+}
+
+command -v zsh >/dev/null 2>&1 && wire_rc "${ZDOTDIR:-$HOME}/.zshrc"
+command -v bash >/dev/null 2>&1 && wire_rc "$HOME/.bashrc"
+if command -v fish >/dev/null 2>&1 || [ -d "${XDG_CONFIG_HOME:-$HOME/.config}/fish" ]; then
+  mkdir -p "$(dirname "$FISH_CONF")"
+  fetch git-wrapper.fish "$FISH_CONF"
+  info "fish: installed $(basename "$FISH_CONF") to fish conf.d"
 fi
 
 # --- 3. management CLI ------------------------------------------------------
@@ -116,4 +137,4 @@ if [ "$SCAN" -eq 1 ]; then
   "$CLI" scan
 fi
 
-info "done. open a new terminal (or run: source $ZSHRC) to activate the git wrapper."
+info "done. open a new terminal to activate the git wrapper."
