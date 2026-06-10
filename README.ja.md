@@ -7,7 +7,7 @@
 
 ## やること
 
-1. **グローバル git ignore に `.codegraph/` を追加**
+1. **グローバル git ignore に `.codegraph/` を追加**(任意 — `--no-ignore` でスキップ可)
    すべてのリポジトリ(既存・将来)で `.codegraph/` が git の追跡対象外になります。
 2. **zsh の `git` ラッパーを設置**
    `git init` / `git clone` でリポジトリを作ると、自動でバックグラウンドの `codegraph init` が走ります。
@@ -28,6 +28,9 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/i
 
 # スキャン対象ディレクトリを変更(デフォルト: ~/dev)
 DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh)"
+
+# グローバル git ignore に手を加えない(.codegraph を git 管理したい人向け)
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh -s -- --no-ignore
 ```
 
 何度実行しても安全です(冪等)。設定済みの項目はスキップされます。

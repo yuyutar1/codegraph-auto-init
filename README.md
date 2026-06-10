@@ -7,7 +7,7 @@ Think of it as `codegraph install` / `codegraph uninstall`, but for your shell e
 
 ## What it does
 
-1. **Adds `.codegraph/` to the global git ignore**
+1. **Adds `.codegraph/` to the global git ignore** (optional — skip with `--no-ignore`)
    `.codegraph/` is excluded from git tracking in every repository — existing and future.
 2. **Installs a zsh `git` wrapper**
    Creating a repository with `git init` / `git clone` automatically runs `codegraph init` in the background.
@@ -28,6 +28,9 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/i
 
 # Change the scan target directory (default: ~/dev)
 DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh)"
+
+# Don't add .codegraph/ to the global git ignore (for those who want git to track it)
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh -s -- --no-ignore
 ```
 
 Safe to run repeatedly (idempotent). Already-configured items are skipped.

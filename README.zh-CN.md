@@ -7,7 +7,7 @@
 
 ## 功能
 
-1. **将 `.codegraph/` 添加到全局 git ignore**
+1. **将 `.codegraph/` 添加到全局 git ignore**(可选 — 可用 `--no-ignore` 跳过)
    所有仓库(现有的和未来的)中,`.codegraph/` 都不会被 git 跟踪。
 2. **安装 zsh 的 `git` 包装函数**
    使用 `git init` / `git clone` 创建仓库时,会自动在后台运行 `codegraph init`。
@@ -28,6 +28,9 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/i
 
 # 更改扫描目标目录(默认: ~/dev)
 DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh)"
+
+# 不修改全局 git ignore(适合想让 git 跟踪 .codegraph 的用户)
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh -s -- --no-ignore
 ```
 
 可以安全地重复执行(幂等)。已配置的项目会被跳过。

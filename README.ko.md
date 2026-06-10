@@ -7,7 +7,7 @@
 
 ## 하는 일
 
-1. **글로벌 git ignore에 `.codegraph/` 추가**
+1. **글로벌 git ignore에 `.codegraph/` 추가**(선택 사항 — `--no-ignore`로 건너뛰기 가능)
    모든 저장소(기존 및 향후)에서 `.codegraph/`가 git 추적 대상에서 제외됩니다.
 2. **zsh의 `git` 래퍼 설치**
    `git init` / `git clone`으로 저장소를 만들면 백그라운드에서 `codegraph init`이 자동으로 실행됩니다.
@@ -28,6 +28,9 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/i
 
 # 스캔 대상 디렉터리 변경(기본값: ~/dev)
 DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh)"
+
+# 글로벌 git ignore를 건드리지 않음(.codegraph를 git으로 관리하고 싶은 경우)
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh -s -- --no-ignore
 ```
 
 여러 번 실행해도 안전합니다(멱등성). 이미 설정된 항목은 건너뜁니다.

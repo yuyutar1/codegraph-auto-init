@@ -4,10 +4,12 @@
 # Usage:
 #   curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh
 #   curl -fsSL .../install.sh | sh -s -- --no-scan
+#   curl -fsSL .../install.sh | sh -s -- --no-ignore
 #   DEV_DIR=~/src curl -fsSL .../install.sh | sh
 #
 # What it does (idempotent — safe to re-run):
-#   1. Adds `.codegraph/` to the global git ignore file
+#   1. Adds `.codegraph/` to the global git ignore file (skip with --no-ignore
+#      if you want git to track .codegraph/)
 #   2. Installs a zsh `git` wrapper that auto-runs `codegraph init` on git init/clone
 #   3. Installs the `codegraph-auto-init` CLI into ~/.local/bin
 #   4. Runs `codegraph init` in every existing git repository under the configured
@@ -26,10 +28,12 @@ ZSHRC="${ZDOTDIR:-$HOME}/.zshrc"
 MARKER='# codegraph-auto-init'
 
 SCAN=1
+IGNORE=1
 for arg in "$@"; do
   case "$arg" in
     --no-scan) SCAN=0 ;;
-    *) echo "unknown option: $arg (supported: --no-scan)" >&2; exit 1 ;;
+    --no-ignore) IGNORE=0 ;;
+    *) echo "unknown option: $arg (supported: --no-scan, --no-ignore)" >&2; exit 1 ;;
   esac
 done
 
@@ -47,21 +51,25 @@ fetch() {
   fi
 }
 
-# --- 1. global git ignore -------------------------------------------------
-EXCLUDES_FILE=$(git config --global --get core.excludesFile || true)
-if [ -z "$EXCLUDES_FILE" ]; then
-  EXCLUDES_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/git/ignore"
-fi
-case "$EXCLUDES_FILE" in
-  "~/"*) EXCLUDES_FILE="$HOME/${EXCLUDES_FILE#"~/"}" ;;
-esac
-mkdir -p "$(dirname "$EXCLUDES_FILE")"
-touch "$EXCLUDES_FILE"
-if grep -qxF '.codegraph/' "$EXCLUDES_FILE"; then
-  info "global git ignore: .codegraph/ already present ($EXCLUDES_FILE)"
+# --- 1. global git ignore (optional) ----------------------------------------
+if [ "$IGNORE" -eq 1 ]; then
+  EXCLUDES_FILE=$(git config --global --get core.excludesFile || true)
+  if [ -z "$EXCLUDES_FILE" ]; then
+    EXCLUDES_FILE="${XDG_CONFIG_HOME:-$HOME/.config}/git/ignore"
+  fi
+  case "$EXCLUDES_FILE" in
+    "~/"*) EXCLUDES_FILE="$HOME/${EXCLUDES_FILE#"~/"}" ;;
+  esac
+  mkdir -p "$(dirname "$EXCLUDES_FILE")"
+  touch "$EXCLUDES_FILE"
+  if grep -qxF '.codegraph/' "$EXCLUDES_FILE"; then
+    info "global git ignore: .codegraph/ already present ($EXCLUDES_FILE)"
+  else
+    printf '.codegraph/\n' >>"$EXCLUDES_FILE"
+    info "global git ignore: added .codegraph/ to $EXCLUDES_FILE"
+  fi
 else
-  printf '.codegraph/\n' >>"$EXCLUDES_FILE"
-  info "global git ignore: added .codegraph/ to $EXCLUDES_FILE"
+  info "global git ignore: skipped (--no-ignore) — .codegraph/ stays visible to git"
 fi
 
 # --- 2. zsh git wrapper ---------------------------------------------------
