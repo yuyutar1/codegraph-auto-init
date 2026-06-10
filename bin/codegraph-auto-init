@@ -1,0 +1,105 @@
+#!/bin/sh
+# codegraph-auto-init CLI — manage scan directories and bulk-index repositories
+# https://github.com/yuyutar1/codegraph-auto-init
+set -eu
+
+CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/codegraph-auto-init"
+DIRS_FILE="$CONFIG_DIR/dirs"
+
+info() { printf '\033[1;32m==>\033[0m %s\n' "$1"; }
+warn() { printf '\033[1;33mwarn:\033[0m %s\n' "$1" >&2; }
+die() { printf '\033[1;31merror:\033[0m %s\n' "$1" >&2; exit 1; }
+
+usage() {
+  cat <<'EOF'
+codegraph-auto-init — manage scan directories and bulk-index repositories
+
+Usage:
+  codegraph-auto-init scan [DIR ...]    run codegraph init in every git repo under DIR
+                                        (no DIR: scan all configured directories)
+  codegraph-auto-init dirs              list configured scan directories
+  codegraph-auto-init add-dir DIR       add DIR to the configured scan directories
+  codegraph-auto-init remove-dir DIR    remove DIR from the configured scan directories
+  codegraph-auto-init help              show this help
+
+Config file: ${XDG_CONFIG_HOME:-~/.config}/codegraph-auto-init/dirs (one directory per line)
+EOF
+}
+
+abspath() {
+  (CDPATH='' cd -- "$1" 2>/dev/null && pwd) || return 1
+}
+
+configured_dirs() {
+  if [ -f "$DIRS_FILE" ]; then
+    grep -v '^[[:space:]]*$' "$DIRS_FILE" | grep -v '^#' || true
+  else
+    printf '%s\n' "$HOME/dev"
+  fi
+}
+
+scan_dir() {
+  _dir="$1"
+  if [ ! -d "$_dir" ]; then
+    warn "not a directory, skipping: $_dir"
+    return 0
+  fi
+  info "scanning $_dir"
+  find "$_dir" -name node_modules -prune -o -type d -name .git -print 2>/dev/null |
+    while IFS= read -r gitdir; do
+      repo=$(dirname "$gitdir")
+      [ -d "$repo/.codegraph" ] && continue
+      info "codegraph init: $repo"
+      (cd "$repo" && codegraph init >/dev/null 2>&1) || warn "codegraph init failed: $repo"
+    done
+}
+
+cmd="${1:-help}"
+[ $# -gt 0 ] && shift
+
+case "$cmd" in
+  scan)
+    command -v codegraph >/dev/null 2>&1 || die "codegraph CLI not found in PATH"
+    if [ $# -gt 0 ]; then
+      for d in "$@"; do scan_dir "$d"; done
+    else
+      configured_dirs | while IFS= read -r d; do scan_dir "$d"; done
+    fi
+    info "scan complete"
+    ;;
+  dirs)
+    configured_dirs
+    ;;
+  add-dir)
+    [ $# -eq 1 ] || die "usage: codegraph-auto-init add-dir DIR"
+    abs=$(abspath "$1") || die "not a directory: $1"
+    mkdir -p "$CONFIG_DIR"
+    touch "$DIRS_FILE"
+    if grep -qxF "$abs" "$DIRS_FILE"; then
+      info "already configured: $abs"
+    else
+      printf '%s\n' "$abs" >>"$DIRS_FILE"
+      info "added: $abs"
+      info "run 'codegraph-auto-init scan' to index it now"
+    fi
+    ;;
+  remove-dir)
+    [ $# -eq 1 ] || die "usage: codegraph-auto-init remove-dir DIR"
+    abs=$(abspath "$1") || abs="$1"
+    if [ -f "$DIRS_FILE" ] && grep -qxF "$abs" "$DIRS_FILE"; then
+      tmp=$(mktemp)
+      grep -vxF "$abs" "$DIRS_FILE" >"$tmp" || true
+      mv "$tmp" "$DIRS_FILE"
+      info "removed: $abs"
+    else
+      warn "not in configuration: $abs"
+    fi
+    ;;
+  help|--help|-h)
+    usage
+    ;;
+  *)
+    usage >&2
+    die "unknown command: $cmd"
+    ;;
+esac

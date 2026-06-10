@@ -38,12 +38,26 @@ Safe to run repeatedly (idempotent). Already-configured items are skipped.
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh
 ```
 
-Removes the global ignore entry, the source line in `.zshrc`, and the wrapper itself.
+Removes the global ignore entry, the source line in `.zshrc`, the wrapper, the CLI, and its configuration.
 Per-repository indexes (`.codegraph/`) are kept by default. To delete them as well:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh -s -- --purge
 ```
+
+## Changing scan directories after install
+
+The installer also puts a `codegraph-auto-init` command into `~/.local/bin`, so you are not locked into the `DEV_DIR` chosen at install time:
+
+```sh
+codegraph-auto-init scan ~/work        # bulk-index repos under ~/work right now
+codegraph-auto-init add-dir ~/work     # add ~/work to the configured scan directories
+codegraph-auto-init scan               # re-scan all configured directories
+codegraph-auto-init dirs               # list configured directories
+codegraph-auto-init remove-dir ~/work  # remove a directory from the configuration
+```
+
+Configured directories are stored in `~/.config/codegraph-auto-init/dirs` (one per line). `DEV_DIR` at install time only seeds this file.
 
 ## How it works
 
@@ -52,6 +66,7 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/u
 | `~/.config/git/ignore` | One `.codegraph/` line is appended (or to the file set in `core.excludesFile` if configured) |
 | `~/.config/codegraph-auto-init/git-wrapper.zsh` | The wrapper itself. After a successful `git init` / `git clone`, it detects the new repository and runs `codegraph init` in the background |
 | `~/.zshrc` | One line that sources the file above (tagged with a `# codegraph-auto-init` marker) |
+| `~/.local/bin/codegraph-auto-init` | Management CLI (`scan` / `dirs` / `add-dir` / `remove-dir`) |
 
 The wrapper does nothing in the following cases (fails safe):
 

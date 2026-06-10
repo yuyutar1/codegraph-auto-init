@@ -38,12 +38,26 @@ Es seguro ejecutarlo varias veces (idempotente). Los elementos ya configurados s
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh
 ```
 
-Elimina la entrada del ignore global, la línea de source en `.zshrc` y el propio wrapper.
+Elimina la entrada del ignore global, la línea de source en `.zshrc`, el wrapper, el CLI y su configuración.
 Los índices de cada repositorio (`.codegraph/`) se conservan por defecto. Para eliminarlos también:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh -s -- --purge
 ```
+
+## Cambiar los directorios de escaneo después de instalar
+
+El instalador también coloca el comando `codegraph-auto-init` en `~/.local/bin`, por lo que no quedas atado al `DEV_DIR` elegido durante la instalación:
+
+```sh
+codegraph-auto-init scan ~/work        # indexar ya los repositorios bajo ~/work
+codegraph-auto-init add-dir ~/work     # añadir ~/work a los directorios configurados
+codegraph-auto-init scan               # volver a escanear todos los directorios configurados
+codegraph-auto-init dirs               # listar los directorios configurados
+codegraph-auto-init remove-dir ~/work  # eliminar un directorio de la configuración
+```
+
+Los directorios configurados se guardan en `~/.config/codegraph-auto-init/dirs` (uno por línea). El `DEV_DIR` de la instalación solo define el valor inicial de este archivo.
 
 ## Cómo funciona
 
@@ -52,6 +66,7 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/u
 | `~/.config/git/ignore` | Se añade una línea `.codegraph/` (o al archivo definido en `core.excludesFile` si está configurado) |
 | `~/.config/codegraph-auto-init/git-wrapper.zsh` | El wrapper en sí. Tras un `git init` / `git clone` exitoso, detecta el nuevo repositorio y ejecuta `codegraph init` en segundo plano |
 | `~/.zshrc` | Se añade una línea que hace source del archivo anterior (marcada con `# codegraph-auto-init`) |
+| `~/.local/bin/codegraph-auto-init` | CLI de gestión (`scan` / `dirs` / `add-dir` / `remove-dir`) |
 
 El wrapper no hace nada en los siguientes casos (diseño a prueba de fallos):
 

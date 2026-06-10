@@ -38,12 +38,26 @@ DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/cod
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh
 ```
 
-删除全局 ignore 条目、`.zshrc` 中的 source 行以及包装函数本体。
+删除全局 ignore 条目、`.zshrc` 中的 source 行、包装函数本体、CLI 及其配置。
 各仓库的索引(`.codegraph/`)默认保留。如需一并删除:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh -s -- --purge
 ```
+
+## 安装后更改扫描目录
+
+安装器还会将 `codegraph-auto-init` 命令安装到 `~/.local/bin`,因此你不会被安装时选择的 `DEV_DIR` 所限制:
+
+```sh
+codegraph-auto-init scan ~/work        # 立即批量索引 ~/work 下的仓库
+codegraph-auto-init add-dir ~/work     # 将 ~/work 添加到扫描目录配置
+codegraph-auto-init scan               # 重新扫描所有已配置的目录
+codegraph-auto-init dirs               # 列出已配置的目录
+codegraph-auto-init remove-dir ~/work  # 从配置中移除目录
+```
+
+扫描目录保存在 `~/.config/codegraph-auto-init/dirs`(每行一个目录)。安装时的 `DEV_DIR` 只是该文件的初始值。
 
 ## 工作原理
 
@@ -52,6 +66,7 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/u
 | `~/.config/git/ignore` | 追加一行 `.codegraph/`(如已配置 `core.excludesFile`,则写入该文件) |
 | `~/.config/codegraph-auto-init/git-wrapper.zsh` | 包装函数本体。`git init` / `git clone` 成功后,检测新仓库并在后台运行 `codegraph init` |
 | `~/.zshrc` | 追加一行 source 上述文件的语句(带 `# codegraph-auto-init` 标记) |
+| `~/.local/bin/codegraph-auto-init` | 管理 CLI(`scan` / `dirs` / `add-dir` / `remove-dir`) |
 
 以下情况包装函数不做任何操作(故障安全设计):
 

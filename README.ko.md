@@ -38,12 +38,26 @@ DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/cod
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh
 ```
 
-글로벌 ignore 항목, `.zshrc`의 source 줄, 래퍼 본체를 삭제합니다.
+글로벌 ignore 항목, `.zshrc`의 source 줄, 래퍼 본체, CLI와 설정을 삭제합니다.
 각 저장소의 인덱스(`.codegraph/`)는 기본적으로 유지됩니다. 인덱스까지 삭제하려면:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh -s -- --purge
 ```
+
+## 설치 후 스캔 디렉터리 변경
+
+인스톨러는 `~/.local/bin`에 `codegraph-auto-init` 명령도 설치하므로, 설치 시점에 선택한 `DEV_DIR`에 묶이지 않습니다:
+
+```sh
+codegraph-auto-init scan ~/work        # ~/work 아래 저장소를 지금 바로 일괄 인덱싱
+codegraph-auto-init add-dir ~/work     # 스캔 디렉터리 설정에 ~/work 추가
+codegraph-auto-init scan               # 설정된 모든 디렉터리 재스캔
+codegraph-auto-init dirs               # 설정된 디렉터리 목록 표시
+codegraph-auto-init remove-dir ~/work  # 설정에서 디렉터리 제거
+```
+
+스캔 디렉터리는 `~/.config/codegraph-auto-init/dirs`(한 줄에 하나)에 저장됩니다. 설치 시의 `DEV_DIR`은 이 파일의 초기값일 뿐입니다.
 
 ## 동작 방식
 
@@ -52,6 +66,7 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/u
 | `~/.config/git/ignore` | `.codegraph/` 한 줄 추가(`core.excludesFile`이 설정된 경우 해당 파일에 추가) |
 | `~/.config/codegraph-auto-init/git-wrapper.zsh` | 래퍼 본체. `git init` / `git clone` 성공 후 새 저장소를 감지하여 백그라운드에서 `codegraph init` 실행 |
 | `~/.zshrc` | 위 파일을 source하는 줄 한 줄 추가(`# codegraph-auto-init` 마커 포함) |
+| `~/.local/bin/codegraph-auto-init` | 관리 CLI(`scan` / `dirs` / `add-dir` / `remove-dir`) |
 
 래퍼는 다음 경우에 아무 동작도 하지 않습니다(안전 우선 설계):
 

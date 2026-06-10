@@ -38,12 +38,26 @@ Mehrfache Ausführung ist sicher (idempotent). Bereits konfigurierte Punkte werd
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh
 ```
 
-Entfernt den Eintrag aus der globalen ignore, die source-Zeile in `.zshrc` und den Wrapper selbst.
+Entfernt den Eintrag aus der globalen ignore, die source-Zeile in `.zshrc`, den Wrapper selbst, das CLI und seine Konfiguration.
 Die Indizes der einzelnen Repositories (`.codegraph/`) bleiben standardmäßig erhalten. Um sie ebenfalls zu löschen:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh -s -- --purge
 ```
+
+## Scan-Verzeichnisse nach der Installation ändern
+
+Der Installer legt zusätzlich den Befehl `codegraph-auto-init` in `~/.local/bin` ab — Sie sind also nicht an das bei der Installation gewählte `DEV_DIR` gebunden:
+
+```sh
+codegraph-auto-init scan ~/work        # Repositories unter ~/work sofort indexieren
+codegraph-auto-init add-dir ~/work     # ~/work zu den konfigurierten Verzeichnissen hinzufügen
+codegraph-auto-init scan               # alle konfigurierten Verzeichnisse erneut scannen
+codegraph-auto-init dirs               # konfigurierte Verzeichnisse auflisten
+codegraph-auto-init remove-dir ~/work  # Verzeichnis aus der Konfiguration entfernen
+```
+
+Die konfigurierten Verzeichnisse liegen in `~/.config/codegraph-auto-init/dirs` (eines pro Zeile). Das `DEV_DIR` bei der Installation setzt nur den Anfangswert dieser Datei.
 
 ## Funktionsweise
 
@@ -52,6 +66,7 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/u
 | `~/.config/git/ignore` | Eine Zeile `.codegraph/` wird angehängt (bzw. an die in `core.excludesFile` konfigurierte Datei) |
 | `~/.config/codegraph-auto-init/git-wrapper.zsh` | Der Wrapper selbst. Nach einem erfolgreichen `git init` / `git clone` erkennt er das neue Repository und führt `codegraph init` im Hintergrund aus |
 | `~/.zshrc` | Eine Zeile, die die obige Datei sourct (markiert mit `# codegraph-auto-init`) |
+| `~/.local/bin/codegraph-auto-init` | Verwaltungs-CLI (`scan` / `dirs` / `add-dir` / `remove-dir`) |
 
 Der Wrapper tut in folgenden Fällen nichts (Fail-safe-Design):
 

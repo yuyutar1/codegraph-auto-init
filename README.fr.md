@@ -38,12 +38,26 @@ Peut être exécuté plusieurs fois sans risque (idempotent). Les éléments dé
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh
 ```
 
-Supprime l'entrée du ignore global, la ligne de source dans `.zshrc` et le wrapper lui-même.
+Supprime l'entrée du ignore global, la ligne de source dans `.zshrc`, le wrapper, le CLI et sa configuration.
 Les index de chaque dépôt (`.codegraph/`) sont conservés par défaut. Pour les supprimer également :
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh -s -- --purge
 ```
+
+## Changer les répertoires de scan après l'installation
+
+L'installateur place aussi la commande `codegraph-auto-init` dans `~/.local/bin`, vous n'êtes donc pas lié au `DEV_DIR` choisi à l'installation :
+
+```sh
+codegraph-auto-init scan ~/work        # indexer immédiatement les dépôts sous ~/work
+codegraph-auto-init add-dir ~/work     # ajouter ~/work aux répertoires configurés
+codegraph-auto-init scan               # rescanner tous les répertoires configurés
+codegraph-auto-init dirs               # lister les répertoires configurés
+codegraph-auto-init remove-dir ~/work  # retirer un répertoire de la configuration
+```
+
+Les répertoires configurés sont stockés dans `~/.config/codegraph-auto-init/dirs` (un par ligne). Le `DEV_DIR` de l'installation ne fait qu'initialiser ce fichier.
 
 ## Fonctionnement
 
@@ -52,6 +66,7 @@ curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/u
 | `~/.config/git/ignore` | Une ligne `.codegraph/` est ajoutée (ou au fichier défini dans `core.excludesFile` s'il est configuré) |
 | `~/.config/codegraph-auto-init/git-wrapper.zsh` | Le wrapper lui-même. Après un `git init` / `git clone` réussi, il détecte le nouveau dépôt et exécute `codegraph init` en arrière-plan |
 | `~/.zshrc` | Une ligne qui source le fichier ci-dessus est ajoutée (marquée par `# codegraph-auto-init`) |
+| `~/.local/bin/codegraph-auto-init` | CLI de gestion (`scan` / `dirs` / `add-dir` / `remove-dir`) |
 
 Le wrapper ne fait rien dans les cas suivants (conception à sécurité intégrée) :
 
