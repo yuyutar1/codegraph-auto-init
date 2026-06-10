@@ -7,6 +7,11 @@
 #   curl -fsSL .../install.sh | sh -s -- --no-ignore
 #   DEV_DIR=~/src curl -fsSL .../install.sh | sh
 #
+# Pinning a release: fetch install.sh from a tag AND set the same ref for the
+# assets it downloads (defaults to main):
+#   curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/v1.0.0/install.sh \
+#     | CODEGRAPH_AUTO_INIT_REF=v1.0.0 sh
+#
 # What it does (idempotent — safe to re-run):
 #   1. Adds `.codegraph/` to the global git ignore file (skip with --no-ignore
 #      if you want git to track .codegraph/)
@@ -56,7 +61,7 @@ wire_rc() {
 }
 
 main() {
-  REPO_RAW="https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main"
+  REPO_RAW="https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/${CODEGRAPH_AUTO_INIT_REF:-main}"
   DEV_DIR="${DEV_DIR:-$HOME/dev}"
   CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}/codegraph-auto-init"
   SNIPPET="$CONFIG_DIR/git-wrapper.sh"
