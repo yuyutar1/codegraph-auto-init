@@ -1,0 +1,69 @@
+# codegraph-auto-init
+
+[codegraph](https://github.com/codegraph-dev) のセットアップを開発マシン全体に一発で適用するインストーラです。
+`codegraph install` / `codegraph uninstall` のような感覚で、シェル環境への組み込みと解除ができます。
+
+## やること
+
+1. **グローバル git ignore に `.codegraph/` を追加**
+   すべてのリポジトリ(既存・将来)で `.codegraph/` が git の追跡対象外になります。
+2. **zsh の `git` ラッパーを設置**
+   `git init` / `git clone` でリポジトリを作ると、自動でバックグラウンドの `codegraph init` が走ります。
+3. **既存リポジトリの一括インデックス**
+   `DEV_DIR`(デフォルト: `~/dev`)以下のすべての git リポジトリで `codegraph init` を実行します(`.codegraph` がないリポジトリのみ)。
+
+## Install
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh
+```
+
+オプション:
+
+```sh
+# 既存リポジトリの一括スキャンをスキップ(設定の組み込みのみ)
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh | sh -s -- --no-scan
+
+# スキャン対象ディレクトリを変更(デフォルト: ~/dev)
+DEV_DIR=~/src sh -c "$(curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/install.sh)"
+```
+
+何度実行しても安全です(冪等)。設定済みの項目はスキップされます。
+
+## Uninstall
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh
+```
+
+グローバル ignore のエントリ・`.zshrc` の source 行・ラッパー本体を削除します。
+各リポジトリのインデックス(`.codegraph/`)はデフォルトで残します。インデックスごと消す場合:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/yuyutar1/codegraph-auto-init/main/uninstall.sh | sh -s -- --purge
+```
+
+## 仕組み
+
+| 対象 | 内容 |
+|---|---|
+| `~/.config/git/ignore` | `.codegraph/` を1行追加(`core.excludesFile` 設定済みの場合はそのファイル) |
+| `~/.config/codegraph-auto-init/git-wrapper.zsh` | ラッパー本体。`git init` / `git clone` 成功後に新リポジトリを検出して `codegraph init` をバックグラウンド実行 |
+| `~/.zshrc` | 上記ファイルを source する行を1行追加(`# codegraph-auto-init` マーカー付き) |
+
+ラッパーは以下の場合は何もしません(安全側に倒れる設計):
+
+- `codegraph` CLI が PATH にない
+- 対象ディレクトリに既に `.codegraph/` がある
+- bare リポジトリ(`git init --bare`)
+- `git -C dir init` のような値付きグローバルオプションでサブコマンド検出に失敗した場合
+
+## Requirements
+
+- zsh(ラッパーは zsh 専用。ignore 設定と一括スキャンはシェル非依存)
+- [codegraph](https://www.npmjs.com/package/@codegraph-dev/codegraph) CLI
+- macOS / Linux
+
+## License
+
+MIT
