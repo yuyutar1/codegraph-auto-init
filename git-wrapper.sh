@@ -17,7 +17,15 @@ git() {
     *) return 0 ;;
   esac
   for arg in "$@"; do last="$arg"; done
-  for d in "$last" "$(basename "$last" .git)" "."; do
+  # For clone, never fall back to "." — with trailing options (git clone url
+  # --depth 1) the last arg is not the target, and "." would wrongly index the
+  # parent repo. Doing nothing is the documented fail-safe.
+  if [ "$sub" = "clone" ]; then
+    set -- "$last" "$(basename "$last" .git)"
+  else
+    set -- "$last" "."
+  fi
+  for d in "$@"; do
     if [ -d "$d/.git" ] && [ ! -d "$d/.codegraph" ]; then
       echo "codegraph: indexing $d in background" >&2
       (codegraph init "$d" >/dev/null 2>&1 &)

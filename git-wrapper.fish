@@ -14,7 +14,16 @@ function git --wraps git --description 'git with codegraph auto-init'
     end
     contains -- $sub init clone; or return 0
     set -l last $argv[-1]
-    for d in $last (basename $last .git) '.'
+    # For clone, never fall back to "." — with trailing options (git clone url
+    # --depth 1) the last arg is not the target, and "." would wrongly index
+    # the parent repo. Doing nothing is the documented fail-safe.
+    set -l candidates
+    if test "$sub" = clone
+        set candidates $last (basename $last .git)
+    else
+        set candidates $last '.'
+    end
+    for d in $candidates
         if test -d "$d/.git"; and not test -d "$d/.codegraph"
             echo "codegraph: indexing $d in background" >&2
             codegraph init "$d" >/dev/null 2>&1 &
